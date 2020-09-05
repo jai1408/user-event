@@ -1,0 +1,4 @@
+---
+path: target/user-event-service-2.3.3.RELEASE.war
+applications:
+- name: user-event-service
