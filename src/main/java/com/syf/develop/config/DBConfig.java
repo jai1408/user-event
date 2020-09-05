@@ -12,7 +12,7 @@ public class DBConfig {
 
     @Bean
     public BasicDataSource dataSource() throws URISyntaxException {
-        String DATABASE_URL = "postgres://vistowngfxmvck:7104edd07be15db6d565bcc827205d616c95471e36e6ad0c114a67f8d14ec251@ec2-34-237-89-96.compute-1.amazonaws.com:5432/d3cc024fgj4mnc";
+        String DATABASE_URL = "postgres://iyhpxrqfwkdgig:b5f7279f5817680dd95a8a057e32f9d8532181bc77dbb70cb0e5a292c7ceb2dd@ec2-34-237-89-96.compute-1.amazonaws.com:5432/d8kkenotq6kose";
         URI dbUri = new URI(DATABASE_URL);
 
         String username = dbUri.getUserInfo().split(":")[0];

@@ -1,4 +1,3 @@
-/*
 package com.syf.develop.controller;
 
 import com.syf.develop.model.Group;
@@ -65,4 +64,3 @@ class GroupController {
         return ResponseEntity.ok().build();
     }
 }
-*/

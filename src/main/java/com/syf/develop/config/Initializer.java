@@ -1,3 +1,4 @@
+/*
 package com.syf.develop.config;
 
 import com.syf.develop.model.Event;
@@ -37,3 +38,4 @@ class Initializer implements CommandLineRunner {
         repository.findAll().forEach(System.out::println);
     }
 }
+*/
