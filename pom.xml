@@ -15,8 +15,6 @@
 	<description>project for Spring Boot connectivity with React js</description>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>8</java.version>
 	</properties>
 
@@ -86,12 +84,8 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.1</version>
-			</plugin>
 		</plugins>
+		<finalName>user-event-service</finalName>
 	</build>
 
 </project>
