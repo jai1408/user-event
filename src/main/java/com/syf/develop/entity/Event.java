@@ -1,4 +1,4 @@
-package com.syf.develop.model;
+package com.syf.develop.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

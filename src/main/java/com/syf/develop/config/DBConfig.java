@@ -1,3 +1,4 @@
+/*
 package com.syf.develop.config;
 
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -26,4 +27,4 @@ public class DBConfig {
 
         return basicDataSource;
     }
-}
+}*/
