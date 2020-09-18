@@ -28,7 +28,7 @@ public class UserEventExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        logger.error("{\"exception\"\"{}\",{\"stackTrace\"\"{}\"}", ex.getClass().getSimpleName(), ex.getMessage());
+        logger.error("{\"exception\": \"{}\", \"stackTrace\": \"{}\"}", ex.getClass().getSimpleName(), ex.getMessage());
         List<Errors> errors = ex.getBindingResult().getFieldErrors().stream().map(x -> {
             Errors error = new Errors();
             error.setField(x.getField());
@@ -43,6 +43,8 @@ public class UserEventExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        logger.error("{\"exception\": \"{}\", \"stackTrace\": \"{}\"}", ex.getClass().getSimpleName(), ex.getMessage());
         ErrorResponse errorResponse = createInternalServerError();
         List<Errors> errors = new ArrayList<>();
         Errors error = new Errors();
@@ -56,6 +58,7 @@ public class UserEventExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserEventException.class)
     public ResponseEntity<Object> handleUserEventException(UserEventException ex) {
+        logger.error("{\"exception\": \"{}\", \"stackTrace\": \"{}\"}", ex.getClass().getSimpleName(), ex.getMessage());
         ErrorResponse errorResponse = createInternalServerError();
         List<Errors> errors = new ArrayList<>();
         Errors error = new Errors();
@@ -69,6 +72,8 @@ public class UserEventExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+
+        logger.error("{\"exception\"\"{}\",{\"stackTrace\"\"{}\"}", ex.getClass().getSimpleName(), ex.getMessage());
         ErrorResponse errorResponse = createInternalServerError();
         List<Errors> errors = new ArrayList<>();
         Errors error = new Errors();
@@ -82,6 +87,23 @@ public class UserEventExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(JsonProcessingException.class)
     public ResponseEntity<Object> handleJsonProcessingException(JsonProcessingException ex) {
+
+        logger.error("{\"exception\": \"{}\", \"stackTrace\": \"{}\"}", ex.getClass().getSimpleName(), ex.getMessage());
+        ErrorResponse errorResponse = createInternalServerError();
+        List<Errors> errors = new ArrayList<>();
+        Errors error = new Errors();
+        error.setReason(ex.getCause().toString());
+        error.setLocation("body");
+        error.setField(ex.getLocalizedMessage());
+        errors.add(error);
+        errorResponse.setErrors(errors);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(errorResponse);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<Object> handleNullPointerException(NullPointerException ex) {
+
+        logger.error("{\"exception\": \"{}\", \"stackTrace\": \"{}\"}", ex.getClass().getSimpleName(), ex.getMessage());
         ErrorResponse errorResponse = createInternalServerError();
         List<Errors> errors = new ArrayList<>();
         Errors error = new Errors();
@@ -94,6 +116,7 @@ public class UserEventExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ErrorResponse createInternalServerError() {
+
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode("userEvent.application.internalServerError");
         errorResponse.setMessage("Internal Server Error");
@@ -110,6 +133,7 @@ public class UserEventExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ErrorResponse createBadRequestError() {
+
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setCode("userEvent.application.badRequest");
         errorResponse.setMessage("BAD Request");
