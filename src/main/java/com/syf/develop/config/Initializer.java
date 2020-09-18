@@ -1,8 +1,8 @@
 /*
 package com.syf.develop.config;
 
-import com.syf.develop.model.Event;
-import com.syf.develop.model.Group;
+import com.syf.develop.entity.Event;
+import com.syf.develop.entity.Group;
 import com.syf.develop.repository.GroupRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

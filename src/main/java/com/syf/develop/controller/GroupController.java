@@ -1,11 +1,13 @@
 package com.syf.develop.controller;
 
-import com.syf.develop.model.Group;
+import com.syf.develop.entity.Group;
 import com.syf.develop.repository.GroupRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,12 +29,14 @@ class GroupController {
 
     @CrossOrigin
     @GetMapping("/groups")
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     Collection<Group> groups() {
         return groupRepository.findAll();
     }
 
     @CrossOrigin
     @GetMapping("/group/{id}")
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     ResponseEntity<?> getGroup(@PathVariable Long id) {
         Optional<Group> group = groupRepository.findById(id);
         return group.map(response -> ResponseEntity.ok().body(response))
@@ -41,6 +45,7 @@ class GroupController {
 
     @CrossOrigin
     @PostMapping("/group")
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     ResponseEntity<Group> createGroup(@Valid @RequestBody Group group) throws URISyntaxException {
         log.info("Request to create group: {}", group);
         Group result = groupRepository.save(group);
@@ -50,6 +55,7 @@ class GroupController {
 
     @CrossOrigin
     @PutMapping("/group/{id}")
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     ResponseEntity<Group> updateGroup(@Valid @RequestBody Group group) {
         log.info("Request to update group: {}", group);
         Group result = groupRepository.save(group);
@@ -58,6 +64,7 @@ class GroupController {
 
     @CrossOrigin
     @DeleteMapping("/group/{id}")
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public ResponseEntity<?> deleteGroup(@PathVariable Long id) {
         log.info("Request to delete group: {}", id);
         groupRepository.deleteById(id);

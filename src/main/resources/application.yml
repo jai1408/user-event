@@ -7,3 +7,20 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: true
+  mail:
+    host: smtp.mailtrap.io
+    port: 465
+    username: 88ca9b0b870e44
+    password: 9918de57d6a50e
+    protocol: smtp
+jwt:
+  expiration:
+    time: 90000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /
+  security:
+    enabled: false
