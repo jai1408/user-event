@@ -1,6 +1,7 @@
 package com.syf.develop.service;
 
 import com.syf.develop.entity.RefreshToken;
+import com.syf.develop.exception.UserEventError;
 import com.syf.develop.exception.UserEventException;
 import com.syf.develop.repository.RefreshTokenRepository;
 import lombok.AllArgsConstructor;
@@ -25,9 +26,9 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
-    void validateRefreshToken(String token) {
+    void validateRefreshToken(String token) throws UserEventException {
         refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new UserEventException("Invalid refresh Token"));
+                .orElseThrow(() -> new UserEventException("Invalid refresh Token", UserEventError.INVALID_TOKEN));
     }
 
     public void deleteRefreshToken(String token) {

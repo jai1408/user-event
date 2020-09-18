@@ -3,6 +3,7 @@ package com.syf.develop.service;
 
 import com.syf.develop.entity.User;
 import com.syf.develop.entity.VerificationToken;
+import com.syf.develop.exception.UserEventError;
 import com.syf.develop.exception.UserEventException;
 import com.syf.develop.mapper.UserMapper;
 import com.syf.develop.model.*;
@@ -11,7 +12,6 @@ import com.syf.develop.repository.VerificationTokenRepository;
 import com.syf.develop.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,8 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -42,9 +40,9 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final UserMapper userMapper;
 
-    public Optional<UserDTO> signup(UserDTO request) {
+    public Optional<UserDTO> signup(UserDTO request) throws UserEventException {
 
-        if (userRepository.findByEmail(request.getEmail())!=null) {
+        if (!(userRepository.findByEmail(request.getEmail()).isPresent())) {
             generateUniqueUserId(request);
             encryptUserPassword(request);
             User user = userMapper.userDtoToUser(request);
@@ -57,7 +55,7 @@ public class AuthService {
                             + "http://localhost:8080/api/auth/accountVerification/" + token));
             return Optional.of(userMapper.userToUserDTO(savedUser));
         } else {
-            throw new UserEventException("User already registered with - " + request.getEmail());
+            throw new UserEventException("User already registered with email "+request.getEmail(), UserEventError.USER_ALREADY_REGISTERED);
         }
     }
 
@@ -72,22 +70,22 @@ public class AuthService {
         return token;
     }
 
-    public void verifyAccount(String token) {
+    public void verifyAccount(String token) throws UserEventException {
         Optional<VerificationToken> verificationToken = verficationTokenRepository.findByToken(token);
-        verificationToken.orElseThrow(() -> new UserEventException("Invalid Token"));
+        verificationToken.orElseThrow(() -> new UserEventException("Invalid Token", UserEventError.INVALID_TOKEN));
         fetchUserAndEnable(verificationToken.get());
     }
 
 
-    private void fetchUserAndEnable(VerificationToken verificationToken) {
+    private void fetchUserAndEnable(VerificationToken verificationToken) throws UserEventException {
         String userId = verificationToken.getUser().getUserId();
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserEventException("User Not Found with name - " + userId));
+                .orElseThrow(() -> new UserEventException("User Not Found with email " + userId,UserEventError.USER_NOT_FOUND));
         user.setEnabled(true);
         userRepository.save(user);
     }
 
-    public AuthenticationResponse login(LoginRequest loginRequest) {
+    public AuthenticationResponse login(LoginRequest loginRequest) throws UserEventException {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                 loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
@@ -115,7 +113,7 @@ public class AuthService {
         request.setEncryptedPassword(passwordEncoder.encode(request.getPassword()));
     }
 
-    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) throws UserEventException {
         refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
         String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUsername());
         return AuthenticationResponse.builder()

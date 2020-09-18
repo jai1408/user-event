@@ -1,5 +1,6 @@
 package com.syf.develop.service;
 
+import com.syf.develop.exception.UserEventError;
 import com.syf.develop.exception.UserEventException;
 import com.syf.develop.model.NotificationEmail;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class MailService {
     private final JavaMailSender mailSender;
 
     @Async
-    public void sendMail(NotificationEmail notificationEmail) {
+    public void sendMail(NotificationEmail notificationEmail) throws UserEventException {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setFrom("springreddit@email.com");
@@ -32,7 +33,7 @@ public class MailService {
             log.info("Activation email sent!!");
         } catch (Exception e) {
             log.error("Exception occurred when sending mail", e);
-            throw new UserEventException("Exception occurred when sending mail to " + notificationEmail.getRecipient());
+            throw new UserEventException("Exception occurred when sending mail to " + notificationEmail.getRecipient(), UserEventError.MAIL_NOT_SEND);
         }
     }
 

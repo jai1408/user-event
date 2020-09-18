@@ -1,11 +1,16 @@
 package com.syf.develop.exception;
 
-public class UserEventException extends RuntimeException {
-	public UserEventException(String exMessage, Exception exception) {
-		super(exMessage, exception);
-	}
+public class UserEventException extends Exception {
 
-	public UserEventException(String exMessage) {
-		super(exMessage);
-	}
+    private final UserEventError userEventError;
+
+    public UserEventException(String exMessage, UserEventError userEventError) {
+        super(exMessage);
+        this.userEventError = userEventError;
+
+    }
+
+    public UserEventError getUserEventError() {
+        return userEventError;
+    }
 }
