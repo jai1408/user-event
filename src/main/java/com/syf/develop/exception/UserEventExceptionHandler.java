@@ -62,9 +62,9 @@ public class UserEventExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorResponse errorResponse = createInternalServerError();
         List<Errors> errors = new ArrayList<>();
         Errors error = new Errors();
-        error.setReason(ex.getUserEventError().getText());
+        error.setReason(ex.getLocalizedMessage());
         error.setLocation("body");
-        error.setField(ex.getLocalizedMessage());
+        error.setField("");
         errors.add(error);
         errorResponse.setErrors(errors);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(errorResponse);
